@@ -1,9 +1,9 @@
-type DataType = 'integer' | 'int32'
-type RequestMethod = 'post' | 'get' | 'delete' | 'put' | 'update'
-type RequestConsume = 'application/json' | 'application/' | 'delete' | 'put' | 'update'
-type RequestIn = 'body' | 'query' | 'path'
+export type DataType = 'integer' | 'int32'
+export type RequestMethod = 'post' | 'get' | 'delete' | 'put' | 'update'
+export type RequestConsume = 'application/json' | 'application/' | 'delete' | 'put' | 'update'
+export type RequestIn = 'body' | 'query' | 'path'
 
-interface Swagger {
+export interface Swagger {
   basePath: string
   host: string
   swagger: string
@@ -11,16 +11,16 @@ interface Swagger {
   paths: Record<string, Partial<Record<RequestMethod, SwaggerRequest>>>
 }
 
-interface SwaggerDefinations {
+export interface SwaggerDefinations {
   ApiResponse: SwaggerApiResponseDefination
 }
 
-interface SwaggerApiResponseDefination {
+export interface SwaggerApiResponseDefination {
   type: 'object'
   properties: Record<string, { type: DataType, format?: DataType }>
 }
 
-interface SwaggerRequest {
+export interface SwaggerRequest {
   consumes: RequestConsume[]
   description: string
   operationId: string
@@ -30,7 +30,7 @@ interface SwaggerRequest {
   tags: string[]
 }
 
-interface SwaggerRequestParameter {
+export interface SwaggerRequestParameter {
   description: string
   in: RequestIn
   name: string
