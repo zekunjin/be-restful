@@ -1,7 +1,7 @@
 type DataType = 'integer' | 'int32'
 type RequestMethod = 'post' | 'get' | 'delete' | 'put' | 'update'
 type RequestConsume = 'application/json' | 'application/' | 'delete' | 'put' | 'update'
-type RequestIn = 'body' | 'query' | 'params'
+type RequestIn = 'body' | 'query' | 'path'
 
 interface Swagger {
   basePath: string
@@ -33,5 +33,8 @@ interface SwaggerRequest {
 interface SwaggerRequestParameter {
   description: string
   in: RequestIn
+  name: string
+  type: DataType
+  format: DataType
   required: boolean
 }
