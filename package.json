@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "pnpm -r --filter=./packages/* dev && tsup --watch",
-    "build": "tsup",
+    "build": "pnpm -r --filter=./packages/* build && tsup",
     "test": "vitest"
   },
   "repository": {
