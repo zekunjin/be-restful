@@ -1,0 +1,14 @@
+{
+  "name": "@be-restful/cli",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC"
+}

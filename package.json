@@ -1,0 +1,39 @@
+{
+  "name": "be-restful",
+  "version": "0.0.1",
+  "description": "A restful api client for frontend.",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "pnpm -r --filter=./packages/* dev && tsup --watch",
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zekunjin/be-restful.git"
+  },
+  "keywords": [
+    "restful",
+    "swagger",
+    "api",
+    "client"
+  ],
+  "author": "zekun.jin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zekunjin/be-restful/issues"
+  },
+  "homepage": "https://github.com/zekunjin/be-restful#readme",
+  "dependencies": {
+    "@be-restful/cli": "workspace:^0.0.1",
+    "@be-restful/core": "workspace:^0.0.1",
+    "@be-restful/swagger": "workspace:^0.0.1"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
+    "eslint": "^8.47.0",
+    "tsup": "^7.2.0",
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.2"
+  }
+}
