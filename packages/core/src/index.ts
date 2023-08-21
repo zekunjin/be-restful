@@ -16,7 +16,7 @@ class Client {
 
   public _body = {}
   public _query = {}
-  public _header = {}
+  public _headers = {}
 
   constructor (url: string) {
     this._url = url
@@ -34,8 +34,8 @@ class Client {
     this._query = data
   }
 
-  public header (data: Record<string, string>) {
-    this._header = data
+  public headers (data: Record<string, string>) {
+    this._headers = data
   }
 
   get url () {
@@ -47,7 +47,13 @@ class Client {
   }
 }
 
-const _fetch = (url, client: Client) => () => { }
+const _fetch = (url: string, client: Client, method: string) => () => {
+  const query = client._query
+  const body = client._body
+  const headers = client._headers
+
+  return ofetch(url, { query, body, headers, method })
+}
 
 export const defineClient = <T extends Swagger>(conf: T) => () => {
   return {
@@ -55,7 +61,7 @@ export const defineClient = <T extends Swagger>(conf: T) => () => {
       const r: Record<string, any> = {}
       const c = new Client(url as string)
       Object.keys(conf.paths[url as any]).forEach((method) => {
-        r[method] = _fetch(url, c)
+        r[method] = _fetch(url as string, c, method)
       })
       return { ...c, ...r } as unknown as ClientExports & { [M in keyof T['paths'][U]]: <R>() => Promise<R extends unknown | undefined ? ClientResponse : R> }
     }
