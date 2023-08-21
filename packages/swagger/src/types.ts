@@ -1,6 +1,6 @@
 export type DataType = 'integer' | 'int32'
 export type RequestMethod = 'post' | 'get' | 'delete' | 'put' | 'update'
-export type RequestConsume = 'application/json' | 'application/' | 'delete' | 'put' | 'update'
+export type RequestConsume = 'application/json' | 'application/xml'
 export type RequestIn = 'body' | 'query' | 'path'
 
 export interface Swagger {
@@ -16,25 +16,25 @@ export interface SwaggerDefinations {
 }
 
 export interface SwaggerApiResponseDefination {
-  type: 'object'
-  properties: Record<string, { type: DataType, format?: DataType }>
+  type: string
+  properties: Record<string, { type: string, format?: string | undefined } & Record<string, any>>
 }
 
 export interface SwaggerRequest {
-  consumes: RequestConsume[]
+  consumes: string[]
   description: string
   operationId: string
   parameters: SwaggerRequestParameter[]
-  produces: RequestConsume[]
+  produces: string[]
   summary: string
   tags: string[]
 }
 
 export interface SwaggerRequestParameter {
   description: string
-  in: RequestIn
+  in: string
   name: string
-  type: DataType
-  format: DataType
+  type: string
+  format?: string | undefined
   required: boolean
 }

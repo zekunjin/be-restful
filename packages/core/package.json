@@ -10,5 +10,8 @@
     "test": "vitest"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ofetch": "^1.1.1"
+  }
 }

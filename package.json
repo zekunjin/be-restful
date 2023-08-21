@@ -4,8 +4,8 @@
   "description": "A restful api client for frontend.",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "pnpm -r --filter=./packages/* dev && tsup --watch",
-    "build": "pnpm -r --filter=./packages/* build && tsup",
+    "dev": "pnpm -r --filter=./packages/* dev",
+    "build": "pnpm -r --filter=./packages/* build",
     "test": "vitest"
   },
   "repository": {
