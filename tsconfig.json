@@ -9,6 +9,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
+    "noUncheckedIndexedAccess": true,
     "declaration": true,
     "resolveJsonModule": true,
     "rootDir": ".",

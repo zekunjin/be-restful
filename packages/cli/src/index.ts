@@ -2,47 +2,23 @@
 
 import { ofetch } from 'ofetch'
 import fse from 'fs-extra'
-import { join } from 'pathe'
-import optionalChaining from 'lodash.get'
-import { readConf } from '@be-restful/shared'
+import { join, relative } from 'pathe'
+import { readConf, execAsync } from '@be-restful/shared'
 import swaggerJson from '../public/swagger.json'
-import client from '../public/client.json'
 
-export type ClientResponse = typeof client
+export * from '../public/client'
 
-const SWAGGER_ROOT_DIR = '#'
 const SWAGGER_JSON_FILE = join(__dirname, '../public', 'swagger.json')
-const CLIENT_JSON_FILE = join(__dirname, '../public', 'client.json')
-
-const generateClient = (schema: { type?: 'object' | 'array' }, def: any) => {
-  if (schema.type === 'array') {
-    return [def]
-  }
-  return def
-}
+const CLIENT_DTS_FILE = join(__dirname, '../public', 'client.d.ts')
 
 const main = async () => {
   const conf = await readConf()
   const json = await ofetch(conf.swaggerJson)
   await fse.ensureFile(SWAGGER_JSON_FILE)
   await fse.writeJson(SWAGGER_JSON_FILE, json)
-  const client: Record<string, Record<string, any>> = {}
-  Object.entries(json.paths).forEach(([path, content]) => {
-    if (!client[path]) { client[path] = {} }
-    Object.entries(content as Record<string, any>).forEach(([method, { responses }]) => {
-      const successResponse = responses['200']
-      if (successResponse) {
-        const { schema } = successResponse
-        const ref = schema.items?.$ref || schema.$ref
-        if (ref) {
-          const p = ref.split('/').filter((item: string) => item !== SWAGGER_ROOT_DIR).join('.')
-          const def = optionalChaining(json, p)
-          client[path][method] = generateClient(schema, def)
-        }
-      }
-    })
-  })
-  await fse.writeJson(CLIENT_JSON_FILE, client)
+  const from = relative('.', SWAGGER_JSON_FILE)
+  const to = relative('.', CLIENT_DTS_FILE)
+  await execAsync(`npx openapi-typescript ${from} -o ${to}`)
 }
 
 export const readSwaggerJson = async ({ force }: { force: boolean }): Promise<typeof swaggerJson> => {

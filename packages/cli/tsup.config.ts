@@ -8,6 +8,6 @@ export default defineConfig(options => ({
   treeshake: !options.watch,
   dts: true,
   format: ['cjs'],
-  external: ['../public/swagger.json', '../public/client.json'],
+  external: ['../public/swagger.json', '../public/client.d.ts'],
   minify: !options.watch
 }))
