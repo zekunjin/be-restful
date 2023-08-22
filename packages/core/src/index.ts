@@ -1,8 +1,11 @@
 import { ofetch } from 'ofetch'
 import { readSwaggerJson, paths } from '@be-restful/cli'
 
+// @ts-ignore
+type SuccessResponse<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['responses'][200]['content']['application/json']
+
 type ClientExportReturn<T, U extends keyof paths> = ClientExports<T, U> & {
-  [M in keyof paths[U]]: <R>() => R extends unknown ? paths[U][M]['responses'][200]['content']['application/json'] : Promise<R>
+  [M in keyof paths[U]]: <R>() => R extends unknown ? Promise<SuccessResponse<U, M>> : Promise<R>
 }
 
 type ClientExports<T, U extends keyof paths> = {

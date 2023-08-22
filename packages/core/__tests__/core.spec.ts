@@ -12,7 +12,7 @@ describe('core package', () => {
 
   test('should fetch target url', async () => {
     const { client } = await useClient({ baseURL: BASE_URL })
-    const res = await client('/auditlog/list').post()
+    const res = await client('/auditlog/list').body({}).post()
     expect(!!res.data).toBe(true)
   })
 })
