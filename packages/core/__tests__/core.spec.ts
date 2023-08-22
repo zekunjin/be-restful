@@ -3,7 +3,7 @@ import { readSwaggerJson } from '@be-restful/cli'
 import { useClient } from '../src/index'
 
 const BASE_URL = 'https://petstore.swagger.io/v2/'
-const PET_ID = '9223372016900013000'
+const PET_ID = '9223372036854433000'
 
 describe('core package', () => {
   test('should load swagger config', async () => {
@@ -13,7 +13,7 @@ describe('core package', () => {
 
   test('should fetch target url', async () => {
     const { client } = await useClient({ baseURL: BASE_URL })
-    const res = await client('/pet/{petId}').params({ petId: PET_ID }).get<string>()
-    expect(res).toBe('doggie')
+    const res = await client('/pet/{petId}').params({ petId: PET_ID }).get<{ name: string }>()
+    expect(res.name).toBe('doggie')
   })
 })
