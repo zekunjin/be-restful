@@ -1,5 +1,5 @@
 import { ofetch } from 'ofetch'
-import { readSwaggerJson, paths } from '@be-restful/cli'
+import { getOpenapiJSON, paths } from '@be-restful/cli'
 
 // @ts-ignore
 type SuccessResponse<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['responses'][200]['content']['application/json']
@@ -100,6 +100,6 @@ export const defineClient = <T>(_conf: T) => (opts?: UseClientOptions) => {
 }
 
 export const useClient = async (opts?: UseClientOptions) => {
-  const conf = await readSwaggerJson({ force: false })
+  const conf = await getOpenapiJSON({ force: false })
   return defineClient(conf)(opts)
 }

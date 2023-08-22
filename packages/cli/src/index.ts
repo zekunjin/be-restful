@@ -21,7 +21,7 @@ const main = async () => {
   await execAsync(`npx openapi-typescript ${from} -o ${to}`)
 }
 
-export const readSwaggerJson = async ({ force }: { force: boolean }): Promise<typeof swaggerJson> => {
+export const getOpenapiJSON = async ({ force }: { force: boolean }): Promise<typeof swaggerJson> => {
   const exist = await fse.pathExists(SWAGGER_JSON_FILE)
   if (force && !exist) { await main() }
   return fse.readJson(SWAGGER_JSON_FILE)

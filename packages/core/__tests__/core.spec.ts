@@ -1,12 +1,12 @@
 import { describe, test, expect } from 'vitest'
-import { readSwaggerJson } from '@be-restful/cli'
+import { getOpenapiJSON } from '@be-restful/cli'
 import { useClient } from '../src/index'
 
 const BASE_URL = '/'
 
 describe('core package', () => {
   test('should load swagger config', async () => {
-    const conf = await readSwaggerJson({ force: true })
+    const conf = await getOpenapiJSON({ force: true })
     expect(conf.openapi).toBe('2.0')
   })
 
