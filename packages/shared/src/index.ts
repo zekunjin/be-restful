@@ -1,7 +1,7 @@
 import { loadConfig } from 'c12'
 
 export interface RestfulConfig {
-  swaggerJSON: string
+  swaggerJson: string
 }
 
 export const CONFIG_FILENAME = 'restful'

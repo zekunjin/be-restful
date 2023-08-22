@@ -1,6 +1,6 @@
 import { ofetch } from 'ofetch'
+import { readSwaggerJson } from '@be-restful/cli'
 import { Swagger } from '@be-restful/swagger'
-import conf from '../config.json'
 import { ClientResponse } from './types'
 
 type ClientExports = {
@@ -9,6 +9,8 @@ type ClientExports = {
   query: (data: Record<string, any>) => void
   header: (data: Record<string, string>) => void
 }
+
+interface UseClientOptions {}
 
 class Client {
   private _url = ''
@@ -55,7 +57,7 @@ const _fetch = (url: string, client: Client, method: string) => () => {
   return ofetch(url, { query, body, headers, method })
 }
 
-export const defineClient = <T extends Swagger>(conf: T) => () => {
+export const defineClient = <T extends Swagger>(conf: T) => (_opts?: UseClientOptions) => {
   return {
     client: <U extends keyof T['paths']>(url: U) => {
       const r: Record<string, any> = {}
@@ -63,11 +65,12 @@ export const defineClient = <T extends Swagger>(conf: T) => () => {
       Object.keys(conf.paths[url as any]).forEach((method) => {
         r[method] = _fetch(url as string, c, method)
       })
-      return { ...c, ...r } as unknown as ClientExports & { [M in keyof T['paths'][U]]: <R>() => Promise<R extends unknown | undefined ? ClientResponse : R> }
+      return { ...c, ...r } as unknown as ClientExports & { [M in keyof T['paths'][U]]: <R>() => Promise<R extends unknown | undefined ? ClientResponse<U, M> : R> }
     }
   }
 }
 
-const { client } = defineClient(conf)()
-const res = client('/pet/findByTags').get()
-console.log(res)
+export const useClient = async (opts?: UseClientOptions) => {
+  const conf = await readSwaggerJson()
+  return defineClient(conf)(opts)
+}
