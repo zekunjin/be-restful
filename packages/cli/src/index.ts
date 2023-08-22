@@ -10,6 +10,7 @@ import client from '../public/client.json'
 
 export type ClientResponse = typeof client
 
+const SWAGGER_ROOT_DIR = '#'
 const SWAGGER_JSON_FILE = join(__dirname, '../public', 'swagger.json')
 const CLIENT_JSON_FILE = join(__dirname, '../public', 'client.json')
 
@@ -34,7 +35,7 @@ const main = async () => {
         const { schema } = successResponse
         const ref = schema.items?.$ref || schema.$ref
         if (ref) {
-          const p = ref.split('/').filter((item: string) => item !== '#').join('.')
+          const p = ref.split('/').filter((item: string) => item !== SWAGGER_ROOT_DIR).join('.')
           const def = optionalChaining(json, p)
           client[path][method] = generateClient(schema, def)
         }
