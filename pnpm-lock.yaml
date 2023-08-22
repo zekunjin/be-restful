@@ -7,7 +7,6 @@ importers:
       '@be-restful/cli': workspace:^0.0.1
       '@be-restful/core': workspace:^0.0.1
       '@be-restful/shared': workspace:^0.0.1
-      '@be-restful/swagger': workspace:^0.0.1
       '@nuxtjs/eslint-config-typescript': ^12.0.0
       '@types/node': ^20.5.0
       eslint: ^8.47.0
@@ -18,7 +17,6 @@ importers:
       '@be-restful/cli': link:packages/cli
       '@be-restful/core': link:packages/core
       '@be-restful/shared': link:packages/shared
-      '@be-restful/swagger': link:packages/swagger
     devDependencies:
       '@nuxtjs/eslint-config-typescript': 12.0.0_qj3u6ezxe2airdzjq3nyoxe24m
       '@types/node': 20.5.0
@@ -53,9 +51,6 @@ importers:
       c12: ^1.4.2
     dependencies:
       c12: 1.4.2
-
-  packages/swagger:
-    specifiers: {}
 
 packages:
 

@@ -9,7 +9,7 @@ import swaggerJson from '../public/swagger.json'
 export * from '../public/client'
 
 const SWAGGER_JSON_FILE = join(__dirname, '../public', 'swagger.json')
-const CLIENT_DTS_FILE = join(__dirname, '../public', 'client.d.ts')
+const CLIENT_DTS_FILE = join(__dirname, '../public', 'client.ts')
 
 const main = async () => {
   const conf = await readConf()

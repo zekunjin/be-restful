@@ -31,8 +31,7 @@
   "dependencies": {
     "@be-restful/cli": "workspace:^0.0.1",
     "@be-restful/core": "workspace:^0.0.1",
-    "@be-restful/shared": "workspace:^0.0.1",
-    "@be-restful/swagger": "workspace:^0.0.1"
+    "@be-restful/shared": "workspace:^0.0.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.0.0",

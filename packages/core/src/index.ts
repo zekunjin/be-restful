@@ -1,12 +1,11 @@
 import { ofetch } from 'ofetch'
-import { readSwaggerJson } from '@be-restful/cli'
-import { Swagger } from '@be-restful/swagger'
+import { readSwaggerJson, paths } from '@be-restful/cli'
 
-type ClientExportReturn<T extends Swagger, U extends keyof T['paths']> = ClientExports<T, U> & {
-  [M in keyof T['paths'][U]]: <R>() => Promise<R>
+type ClientExportReturn<T, U extends keyof paths> = ClientExports<T, U> & {
+  [M in keyof paths[U]]: <R>() => R extends unknown ? paths[U][M]['responses'][200]['content']['application/json'] : Promise<R>
 }
 
-type ClientExports<T extends Swagger, U extends keyof T['paths']> = {
+type ClientExports<T, U extends keyof paths> = {
   params: (data: Record<string, string>) => ClientExportReturn<T, U>
   body: (data: Record<string, any>) => ClientExportReturn<T, U>
   query: (data: Record<string, any>) => ClientExportReturn<T, U>
@@ -88,9 +87,9 @@ const _fetch = (client: Client, method: string) => (opts: UseClientOptions = {})
   return ofetch(client.url, { query, body, headers, method: method.toUpperCase(), ...opts })
 }
 
-export const defineClient = <T extends Swagger>(_conf: T) => (opts?: UseClientOptions) => {
+export const defineClient = <T>(_conf: T) => (opts?: UseClientOptions) => {
   return {
-    client: <U extends keyof T['paths']>(url: U) => {
+    client: <U extends keyof paths>(url: U) => {
       const c = new Client(url as string, opts)
       return c as unknown as ClientExportReturn<T, U>
     }
