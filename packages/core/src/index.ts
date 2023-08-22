@@ -1,43 +1,74 @@
 import { ofetch } from 'ofetch'
 import { readSwaggerJson } from '@be-restful/cli'
 import { Swagger } from '@be-restful/swagger'
-import { ClientResponse } from './types'
 
-type ClientExports = {
-  params: (data: Record<string, string>) => void
-  body: (data: Record<string, any>) => void
-  query: (data: Record<string, any>) => void
-  header: (data: Record<string, string>) => void
+type ClientExportReturn<T extends Swagger, U extends keyof T['paths']> = ClientExports<T, U> & {
+  [M in keyof T['paths'][U]]: <R>() => Promise<R>
 }
 
-interface UseClientOptions {}
+type ClientExports<T extends Swagger, U extends keyof T['paths']> = {
+  params: (data: Record<string, string>) => ClientExportReturn<T, U>
+  body: (data: Record<string, any>) => ClientExportReturn<T, U>
+  query: (data: Record<string, any>) => ClientExportReturn<T, U>
+  header: (data: Record<string, string>) => ClientExportReturn<T, U>
+}
+
+interface UseClientOptions {
+  baseURL?: string
+}
 
 class Client {
+  private _opts: UseClientOptions = {}
   private _url = ''
   private _params: Record<string, string> = {}
 
-  public _body = {}
-  public _query = {}
-  public _headers = {}
+  public _body: undefined | Record<string, any> = undefined
+  public _query: undefined | Record<string, any> = undefined
+  public _headers: undefined | Record<string, string> = undefined
 
-  constructor (url: string) {
+  constructor (url: string, opts?: UseClientOptions) {
     this._url = url
+    this._opts = opts || {}
   }
 
   public params (data: Record<string, string>) {
     this._params = data
+    return this
   }
 
   public body (data: Record<string, any>) {
     this._body = data
+    return this
   }
 
   public query (data: Record<string, any>) {
     this._query = data
+    return this
   }
 
   public headers (data: Record<string, string>) {
     this._headers = data
+    return this
+  }
+
+  public get () {
+    return _fetch(this, 'get')(this._opts)
+  }
+
+  public post () {
+    return _fetch(this, 'post')(this._opts)
+  }
+
+  public put () {
+    return _fetch(this, 'put')(this._opts)
+  }
+
+  public update () {
+    return _fetch(this, 'update')(this._opts)
+  }
+
+  public delete () {
+    return _fetch(this, 'delete')(this._opts)
   }
 
   get url () {
@@ -49,28 +80,24 @@ class Client {
   }
 }
 
-const _fetch = (url: string, client: Client, method: string) => () => {
+const _fetch = (client: Client, method: string) => (opts: UseClientOptions = {}) => {
   const query = client._query
   const body = client._body
   const headers = client._headers
 
-  return ofetch(url, { query, body, headers, method })
+  return ofetch(client.url, { query, body, headers, method: method.toUpperCase(), ...opts })
 }
 
-export const defineClient = <T extends Swagger>(conf: T) => (_opts?: UseClientOptions) => {
+export const defineClient = <T extends Swagger>(_conf: T) => (opts?: UseClientOptions) => {
   return {
     client: <U extends keyof T['paths']>(url: U) => {
-      const r: Record<string, any> = {}
-      const c = new Client(url as string)
-      Object.keys(conf.paths[url as any]).forEach((method) => {
-        r[method] = _fetch(url as string, c, method)
-      })
-      return { ...c, ...r } as unknown as ClientExports & { [M in keyof T['paths'][U]]: <R>() => Promise<R extends unknown | undefined ? ClientResponse<U, M> : R> }
+      const c = new Client(url as string, opts)
+      return c as unknown as ClientExportReturn<T, U>
     }
   }
 }
 
 export const useClient = async (opts?: UseClientOptions) => {
-  const conf = await readSwaggerJson()
+  const conf = await readSwaggerJson({ force: false })
   return defineClient(conf)(opts)
 }
