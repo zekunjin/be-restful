@@ -2,7 +2,7 @@ import { exec } from 'node:child_process'
 import { loadConfig } from 'c12'
 
 export interface RestfulConfig {
-  swaggerJson: string
+  openapi: string
 }
 
 export const CONFIG_FILENAME = 'restful'

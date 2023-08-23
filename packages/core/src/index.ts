@@ -1,18 +1,20 @@
 import { ofetch } from 'ofetch'
-import { getOpenapiJSON, paths } from '@be-restful/cli'
+import { paths } from '@be-restful/cli'
 
 // @ts-ignore
 type SuccessResponse<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['responses'][200]['content']['application/json']
+// @ts-ignore
+type RequestBody<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['requestBody']['content']['application/json']
 
-type ClientExportReturn<T, U extends keyof paths> = ClientExports<T, U> & {
+type ClientExportReturn<U extends keyof paths> = ClientExports<U> & {
   [M in keyof paths[U]]: <R>() => R extends unknown ? Promise<SuccessResponse<U, M>> : Promise<R>
 }
 
-type ClientExports<T, U extends keyof paths> = {
-  params: (data: Record<string, string>) => ClientExportReturn<T, U>
-  body: (data: Record<string, any>) => ClientExportReturn<T, U>
-  query: (data: Record<string, any>) => ClientExportReturn<T, U>
-  header: (data: Record<string, string>) => ClientExportReturn<T, U>
+type ClientExports<U extends keyof paths> = {
+  params: (data: Record<string, string>) => ClientExportReturn<U>
+  body: <D extends RequestBody<U, keyof paths[U]>> (data: D) => ClientExportReturn<U>
+  query: (data: Record<string, any>) => ClientExportReturn<U>
+  header: (data: Record<string, string>) => ClientExportReturn<U>
 }
 
 interface UseClientOptions {
@@ -21,14 +23,14 @@ interface UseClientOptions {
 
 class Client {
   private _opts: UseClientOptions = {}
-  private _url = ''
+  private _url: keyof paths
   private _params: Record<string, string> = {}
 
   public _body: undefined | Record<string, any> = undefined
   public _query: undefined | Record<string, any> = undefined
   public _headers: undefined | Record<string, string> = undefined
 
-  constructor (url: string, opts?: UseClientOptions) {
+  constructor (url: keyof paths, opts?: UseClientOptions) {
     this._url = url
     this._opts = opts || {}
   }
@@ -74,7 +76,7 @@ class Client {
   }
 
   get url () {
-    let res = this._url
+    let res = this._url as string
     Object.entries(this._params).forEach(([key, value]) => {
       res = res.replaceAll(`{${key}}`, value)
     })
@@ -90,16 +92,15 @@ const _fetch = (client: Client, method: string) => (opts: UseClientOptions = {})
   return ofetch(client.url, { query, body, headers, method: method.toUpperCase(), ...opts })
 }
 
-export const defineClient = <T>(_conf: T) => (opts?: UseClientOptions) => {
+export const defineClient = () => (opts?: UseClientOptions) => {
   return {
     client: <U extends keyof paths>(url: U) => {
-      const c = new Client(url as string, opts)
-      return c as unknown as ClientExportReturn<T, U>
+      const c = new Client(url, opts)
+      return c as unknown as ClientExportReturn<U>
     }
   }
 }
 
-export const useClient = async (opts?: UseClientOptions) => {
-  const conf = await getOpenapiJSON({ force: false })
-  return defineClient(conf)(opts)
+export const useClient = (opts?: UseClientOptions) => {
+  return defineClient()(opts)
 }
