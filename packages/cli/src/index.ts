@@ -21,12 +21,6 @@ const main = async () => {
   await execAsync(`npx openapi-typescript ${from} -o ${to}`)
 }
 
-export const getOpenapiJSON = async ({ force }: { force: boolean }): Promise<typeof openapiJSON> => {
-  const exist = await fse.pathExists(OPENAPI_JSON_FILE)
-  if (force && !exist) { await main() }
-  return fse.readJson(OPENAPI_JSON_FILE)
-}
-
 export { openapiJSON }
 
 main()

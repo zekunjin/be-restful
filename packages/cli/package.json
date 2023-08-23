@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
+  "bin": {
+    "be-restful": "dist/index.js"
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
