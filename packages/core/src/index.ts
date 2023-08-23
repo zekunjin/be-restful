@@ -19,8 +19,12 @@ type ClientExports<U extends keyof paths> = {
 
 interface UseClientOptions {
   baseURL?: string
-  beforeFetch?: (client: Client) => Client
-  afterFetch?: (response: any) => void
+  retry?: number
+  retryDelay?: number
+  timeout?: number
+  onRequest?: (options: Client) => Client
+  onResponse?: (response: any) => void
+  onResponseError?: (context: any) => void
 }
 
 export class Client {
@@ -87,13 +91,13 @@ export class Client {
 }
 
 const _fetch = (client: Client, method: string) => async (opts: UseClientOptions = {}) => {
-  const c = opts.beforeFetch ? opts.beforeFetch(client) : client
+  const c = opts.onRequest ? opts.onRequest(client) : client
   const query = c._query
   const body = c._body
   const headers = c._headers
 
-  const response = await ofetch(c.url, { query, body, headers, method: method.toUpperCase(), baseURL: opts.baseURL })
-  if (opts.afterFetch) { opts.afterFetch(response) }
+  const response = await ofetch(c.url, { query, body, headers, method: method.toUpperCase(), baseURL: opts.baseURL, onResponseError: opts.onResponseError })
+  if (opts.onResponse) { opts.onResponse(response) }
   return response
 }
 

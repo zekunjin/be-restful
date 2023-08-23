@@ -4,14 +4,14 @@ import { Client, useClient } from '../src/index'
 const BASE_URL = '/'
 const ACCESS_TOKEN = ''
 
-const beforeFetch = <T extends Client>(options: T): T => {
+const onRequest = <T extends Client>(options: T): T => {
   options.headers({ Authorization: ACCESS_TOKEN })
   return options
 }
 
 describe('core package', () => {
   test('should fetch target url', async () => {
-    const { client } = useClient({ baseURL: BASE_URL, beforeFetch })
+    const { client } = useClient({ baseURL: BASE_URL, onRequest })
     const { data } = await client('/kube/listnodes').body({}).post()
     expect(!!data).toBe(true)
   })
@@ -20,7 +20,7 @@ describe('core package', () => {
     const headers: Record<string, string> = {}
     const { client } = useClient({
       baseURL: BASE_URL,
-      beforeFetch: (options) => {
+      onRequest: (options) => {
         headers.Authorization = ACCESS_TOKEN
         options.headers(headers)
         return options
