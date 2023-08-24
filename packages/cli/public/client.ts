@@ -764,10 +764,7 @@ export interface components {
       updated_at?: string;
       /**
        * Format: string
-       * @description login 登录模块
- cluster cluster 
- pod  pod 
- node node
+       * @description login 登录模块 cluster cluster  pod  pod  node node
        */
       module?: string;
       /**

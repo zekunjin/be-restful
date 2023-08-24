@@ -3,7 +3,8 @@
 import { ofetch } from 'ofetch'
 import fse from 'fs-extra'
 import { join, relative } from 'pathe'
-import { readConf, execAsync } from '@be-restful/shared'
+import openapiTS from 'openapi-typescript'
+import { readConf } from '@be-restful/shared'
 import openapiJSON from '../public/openapi.json'
 
 export * from '../public/client'
@@ -18,7 +19,9 @@ const main = async () => {
   await fse.writeJson(OPENAPI_JSON_FILE, json)
   const from = relative('.', OPENAPI_JSON_FILE)
   const to = relative('.', CLIENT_DTS_FILE)
-  await execAsync(`npx openapi-typescript ${from} -o ${to}`)
+  const output = await openapiTS(from)
+  await fse.ensureFile(CLIENT_DTS_FILE)
+  await fse.outputFile(to, output)
 }
 
 export { openapiJSON }
