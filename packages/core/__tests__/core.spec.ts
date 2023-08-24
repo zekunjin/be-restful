@@ -29,4 +29,16 @@ describe('core package', () => {
     await client('/kube/listpods').body({}).post()
     expect(!!headers.Authorization).toBe(true)
   })
+
+  test('should set flag after fetch', async () => {
+    let flag = false
+    const { client } = useClient({
+      baseURL: BASE_URL,
+      onResponse: () => {
+        flag = true
+      }
+    })
+    await client('/kube/listpods').body({}).post()
+    expect(flag).toBe(true)
+  })
 })

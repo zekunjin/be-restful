@@ -7,7 +7,7 @@ type SuccessResponse<U extends keyof paths, M extends keyof paths[U]> = paths[U]
 type RequestBody<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['requestBody']['content']['application/json']
 
 type ClientExportReturn<U extends keyof paths> = ClientExports<U> & {
-  [M in keyof paths[U]]: <R>() => R extends unknown ? Promise<SuccessResponse<U, M>> : Promise<R>
+  [M in keyof paths[U]]: <R>() => R extends Record<string, any> ? Promise<R> : Promise<SuccessResponse<U, M>>
 }
 
 type ClientExports<U extends keyof paths> = {
