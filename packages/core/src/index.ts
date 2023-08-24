@@ -5,17 +5,35 @@ import { paths } from '@be-restful/cli'
 type SuccessResponse<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['responses'][200]['content']['application/json']
 // @ts-ignore
 type RequestBody<U extends keyof paths, M extends keyof paths[U]> = paths[U][M]['requestBody']['content']['application/json']
+// @ts-ignore
+type ExtraPathSuccessResponse<E extends ExtraPaths, M> = E[M]['response']
+// @ts-ignore
+type ExtraPathRequestBody<E extends ExtraPaths, M> = E[M]['body']
 
-type ClientExportReturn<U extends keyof paths> = ClientExports<U> & {
-  [M in keyof paths[U]]: <R>() => R extends Record<string, any> ? Promise<R> : Promise<SuccessResponse<U, M>>
+type PathMethods<U extends Paths<E>, E extends ExtraClientOptions> = E extends Record<string, any> ? (keyof paths[U]) | (keyof E['paths'][U]) : keyof paths[U]
+
+type ClientExportReturn<U extends Paths<E>, E extends ExtraClientOptions> = ClientExports<U, E> & {
+  [M in PathMethods<U, E>]: <R>() => R extends Record<string, any> ? Promise<R> : Promise<U extends keyof paths ? SuccessResponse<U, M> : E extends Record<string, any> ? ExtraPathSuccessResponse<E['paths'][U], M> : undefined>
 }
 
-type ClientExports<U extends keyof paths> = {
-  params: (data: Record<string, string>) => ClientExportReturn<U>
-  body: <D extends RequestBody<U, keyof paths[U]>> (data: D) => ClientExportReturn<U>
-  query: (data: Record<string, any>) => ClientExportReturn<U>
-  header: (data: Record<string, string>) => ClientExportReturn<U>
+type ClientExports<U extends Paths<E>, E extends ExtraClientOptions> = {
+  params: (data: Record<string, string>) => ClientExportReturn<U, E>
+  body: E extends Record<string, any> ? (data: ExtraPathRequestBody<E['paths'][U], keyof E['paths'][U]>) => ClientExportReturn<U, E> : (data: RequestBody<U, keyof paths[U]>) => ClientExportReturn<U, E>
+  query: (data: Record<string, any>) => ClientExportReturn<U, E>
+  header: (data: Record<string, string>) => ClientExportReturn<U, E>
 }
+
+type RequestMethods = 'post' | 'get' | 'put' | 'update' | 'delete'
+
+type ExtraClientOptions = { paths: ExtraPaths } | undefined | unknown
+
+type ExtraPaths = Record<string, Partial<Record<RequestMethods, { response: any } & Partial<{
+  body: Record<string, any>
+  params: Record<string, any>
+  query: Record<string, any>
+}>>>>
+
+type Paths<T extends ExtraClientOptions> = T extends Record<string, any> ? keyof paths | keyof T['paths'] : keyof paths
 
 interface UseClientOptions {
   baseURL?: string
@@ -101,15 +119,15 @@ const _fetch = (client: Client, method: string) => async (opts: UseClientOptions
   return response
 }
 
-export const defineClient = () => (opts?: UseClientOptions) => {
+export const defineClient = <E extends ExtraClientOptions>() => (opts?: UseClientOptions) => {
   return {
-    client: <U extends keyof paths>(url: U) => {
-      const c = new Client(url, opts)
-      return c as unknown as ClientExportReturn<U>
+    client: <U extends Paths<E>>(url: U) => {
+      const c = new Client(url as keyof paths, opts)
+      return c as unknown as ClientExportReturn<U, E>
     }
   }
 }
 
-export const useClient = (opts?: UseClientOptions) => {
-  return defineClient()(opts)
+export const useClient = <E extends ExtraClientOptions>(opts?: UseClientOptions) => {
+  return defineClient<E>()(opts)
 }

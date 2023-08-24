@@ -11,8 +11,17 @@ const onRequest = <T extends Client>(options: T): T => {
 
 describe('core package', () => {
   test('should fetch target url', async () => {
-    const { client } = useClient({ baseURL: BASE_URL, onRequest })
-    const { data } = await client('/kube/listnodes').body({}).post()
+    const { client } = useClient<{
+      paths: {
+        '/pets': {
+          post: {
+            body: { pageSize: number }
+            response: { data: boolean }
+          }
+        }
+      }
+    }>({ baseURL: BASE_URL, onRequest })
+    const { data } = await client('/pets').body({ pageSize: 10 }).post()
     expect(!!data).toBe(true)
   })
 
