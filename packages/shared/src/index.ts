@@ -5,7 +5,7 @@ export interface RestfulConfig {
   openapi: string
 }
 
-export const CONFIG_FILENAME = 'restful'
+export const CONFIG_FILENAME = 'be-restful'
 
 export const readConf = async (path = process.cwd()) => {
   const { config } = await loadConfig<RestfulConfig>({ name: CONFIG_FILENAME, cwd: path })

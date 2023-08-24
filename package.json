@@ -4,9 +4,9 @@
   "description": "A restful api client for frontend.",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "pnpm -r --filter=./packages/* dev",
+    "dev": "pnpm -r --workspace-concurrency=1 --filter=./packages/* dev",
     "dev:cli": "pnpm -r --filter=./packages/cli dev",
-    "build": "pnpm -r --filter=./packages/* build",
+    "build": "pnpm -r --workspace-concurrency=1 --filter=./packages/* build",
     "build:shared": "pnpm -r --filter=./packages/shared build",
     "build:core": "pnpm -r --filter=./packages/core build",
     "build:cli": "pnpm -r --filter=./packages/cli build",
