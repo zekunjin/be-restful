@@ -1,6 +1,6 @@
 # Be Restful
 
-💩 A restful api client for frontend.
+💩 A restful api generator cli tools for client.
 
 NOOOOOOOOOOOOOOOOO !!!!!! I found the lib named `openapi-fetch`, fine ~ just use it.
 
